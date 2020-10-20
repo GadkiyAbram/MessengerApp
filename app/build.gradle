@@ -5,14 +5,15 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.example.messengerapp"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,6 +42,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -57,5 +59,7 @@ dependencies {
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    implementation 'com.android.support:multidex:1.0.3'
 }
 
