@@ -46,6 +46,7 @@ class SearchFragment : Fragment() {
         mUsers = ArrayList()
         retrieveAllUsers()
 
+//        TODO("move the Listener to the separate function")
         searchEditText!!.addTextChangedListener ( object : TextWatcher{
             override fun afterTextChanged(cs: Editable?) {
             }
