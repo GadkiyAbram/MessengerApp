@@ -1,11 +1,15 @@
 package com.example.messengerapp.AdapterClasses
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
+import com.example.messengerapp.MessageChatActivity
 import com.example.messengerapp.ModelClasses.Users
 import com.example.messengerapp.R
 import com.squareup.picasso.Picasso
@@ -42,6 +46,26 @@ class UserAdapter(
         val user: Users? = mUsers[i]
         holder.userNameTxt.text = user!!.getUsername().toString()
         Picasso.get().load(user.getProfile()).into(holder.profileImageView);
+
+        holder.itemView.setOnClickListener {
+            val options = arrayOf<CharSequence>(
+                "Send Message",
+                "Visit Profile"
+            )
+            val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
+            builder.setTitle("Whot do you want?")
+            builder.setItems(options, DialogInterface.OnClickListener { dialog, position ->
+                if (position == 0){
+                    val intent = Intent(mContext, MessageChatActivity::class.java)
+                    intent.putExtra("visit_id", user.getUID())
+                    mContext.startActivity(intent)
+                }
+                if (position == 1){
+
+                }
+            })
+            builder.show()
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
