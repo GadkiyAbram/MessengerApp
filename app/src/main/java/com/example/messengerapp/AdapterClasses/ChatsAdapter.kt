@@ -1,6 +1,8 @@
 package com.example.messengerapp.AdapterClasses
 
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +10,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.R
+import com.example.messengerapp.ViewFullImageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -57,6 +63,27 @@ class ChatsAdapter(
         }
     }
 
+    private fun deleteSentMessage(position: Int, holder: ChatsAdapter.ViewHolder) {
+        val ref = FirebaseDatabase.getInstance().reference.child("Chats")
+            .child(mChatList.get(position).getMessageId()!!)
+            .removeValue()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(
+                        holder.itemView.context,
+                        "Message Deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        holder.itemView.context,
+                        "Failed, Not Deleted",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
         return if (position == 1){
             val view: View = LayoutInflater.from(mContext).inflate(R.layout.message_item_right, parent, false)
@@ -78,48 +105,108 @@ class ChatsAdapter(
         Picasso.get().load(imageUrl).into(holder.profileImage)
 
         //images Messages
-        if (chat.getMessage().equals("sent you an image") &&
-                !chat.getUrl().equals(""))
-        {
+        if (chat.getMessage().equals("sent you an image") && !chat.getUrl().equals("")) {
             // image message - right side
-            if (chat.getSender().equals(firebaseUser!!.uid)){
+            if (chat.getSender().equals(firebaseUser!!.uid)) {
                 holder.showTextMessage!!.visibility = View.GONE
                 holder.rightImageView!!.visibility = View.VISIBLE
                 Picasso.get().load(chat.getUrl()).into(holder.rightImageView)
+
+                holder.rightImageView!!.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "View Full Image",
+                        "Delete Image",
+                        "Cancel"
+                    )
+
+                    var builder: AlertDialog.Builder = AlertDialog.Builder(holder.itemView.context)
+                    builder.setTitle("What do you want?")
+
+                    builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                        if (which == 0) {
+                            val intent = Intent(mContext, ViewFullImageActivity::class.java)
+                            intent.putExtra("url", chat.getUrl())
+                            mContext.startActivity(intent)
+                        } else if (which == 1) {
+                            deleteSentMessage(position, holder)
+                        }
+                    })
+                    builder.show()
+                }
             }
             // image message - left side
-            else if (!chat.getSender().equals(firebaseUser!!.uid)){
+            else if (!chat.getSender().equals(firebaseUser!!.uid)) {
                 holder.showTextMessage!!.visibility = View.GONE
                 holder.leftImageView!!.visibility = View.VISIBLE
                 Picasso.get().load(chat.getUrl()).into(holder.leftImageView)
+
+                holder.leftImageView!!.setOnClickListener {
+                    val options = arrayOf<CharSequence>(
+                        "View Full Image",
+                        "Cancel"
+                    )
+
+                    var builder: AlertDialog.Builder = AlertDialog.Builder(holder.itemView.context)
+                    builder.setTitle("What do you want?")
+
+                    builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                        if (which == 0) {
+                            val intent = Intent(mContext, ViewFullImageActivity::class.java)
+                            intent.putExtra("url", chat.getUrl())
+                            mContext.startActivity(intent)
+                        }
+                    })
+                    builder.show()
+                }
             }
         }
         //text messages
-        else{
+        else {
             holder.showTextMessage!!.text = chat.getMessage()
             Log.d("CHAT", chat.getMessage().toString())
+
+            holder.showTextMessage!!.setOnClickListener {
+                val options = arrayOf<CharSequence>(
+                    "Delete",
+                    "Cancel"
+                )
+
+                var builder: AlertDialog.Builder = AlertDialog.Builder(holder.itemView.context)
+                builder.setTitle("What do you want?")
+
+                builder.setItems(options, DialogInterface.OnClickListener { dialog, which ->
+                    if (which == 0) {
+                        deleteSentMessage(position, holder)
+                    }
+                })
+                builder.show()
+            }
         }
 
         // sent and seen message
-        if (position == mChatList.size - 1){
-           if (chat.isIsseen()!!){
-               holder.textSeen!!.text = "seen"
-               if (chat.getMessage().equals("sent you an image") &&
-                   !chat.getUrl().equals("")){
-                   val lp: RelativeLayout.LayoutParams? = holder.textSeen!!.layoutParams as RelativeLayout.LayoutParams
-                   lp!!.setMargins(0, 245, 10, 0)
-                   holder.textSeen!!.layoutParams = lp
-               }
-           }else{
-               holder.textSeen!!.text = "sent"
-               if (chat.getMessage().equals("sent you an image") &&
-                   !chat.getUrl().equals("")){
-                   val lp: RelativeLayout.LayoutParams? = holder.textSeen!!.layoutParams as RelativeLayout.LayoutParams
-                   lp!!.setMargins(0, 245, 10, 0)
-                   holder.textSeen!!.layoutParams = lp
-               }
-           }
-        }else{
+        if (position == mChatList.size - 1) {
+            if (chat.isIsseen()!!) {
+                holder.textSeen!!.text = "seen"
+                if (chat.getMessage().equals("sent you an image") &&
+                    !chat.getUrl().equals("")
+                ) {
+                    val lp: RelativeLayout.LayoutParams? =
+                        holder.textSeen!!.layoutParams as RelativeLayout.LayoutParams
+                    lp!!.setMargins(0, 245, 10, 0)
+                    holder.textSeen!!.layoutParams = lp
+                }
+            } else {
+                holder.textSeen!!.text = "sent"
+                if (chat.getMessage().equals("sent you an image") &&
+                    !chat.getUrl().equals("")
+                ) {
+                    val lp: RelativeLayout.LayoutParams? =
+                        holder.textSeen!!.layoutParams as RelativeLayout.LayoutParams
+                    lp!!.setMargins(0, 245, 10, 0)
+                    holder.textSeen!!.layoutParams = lp
+                }
+            }
+        } else {
             holder.textSeen!!.visibility = View.GONE
         }
     }

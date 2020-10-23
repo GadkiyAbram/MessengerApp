@@ -193,7 +193,7 @@ class MessageChatActivity : AppCompatActivity() {
                             ) {
                                 if (response.code() == 200){
                                     if (response.body()!!.success != 1){
-                                        Toast.makeText(this@MessageChatActivity, "Failed, Nothing happend", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(this@MessageChatActivity, "Failed, Nothing happened", Toast.LENGTH_LONG).show()
                                     }
                                 }
                             }

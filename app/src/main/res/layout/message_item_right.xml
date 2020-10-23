@@ -48,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="seen"
             android:layout_below="@+id/show_text_message">
         </TextView>
 
