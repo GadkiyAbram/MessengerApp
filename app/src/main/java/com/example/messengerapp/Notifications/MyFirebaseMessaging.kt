@@ -78,7 +78,7 @@ class MyFirebaseMessaging : FirebaseMessagingService() {
         val body = mRemoteMessage.data["body"]
 
         val notification = mRemoteMessage.notification
-        val j = user!!.replace("[//D]".toRegex(), "").toInt()
+        val j = user!!.replace("[/D]".toRegex(), "").toInt()
         val intent = Intent(this, MessageChatActivity::class.java)
         val bundle = Bundle()
         bundle.putString("userid", user)
