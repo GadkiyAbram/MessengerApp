@@ -1,5 +1,6 @@
 package com.example.messengerapp.Fragments
 
+import android.media.session.MediaSession
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import com.example.messengerapp.AdapterClasses.UserAdapter
 import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.ModelClasses.ChatList
 import com.example.messengerapp.ModelClasses.Users
+import com.example.messengerapp.Notifications.Token
 import com.example.messengerapp.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -18,6 +20,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.iid.FirebaseInstanceId
 
 class ChatsFragment : Fragment() {
 
@@ -58,7 +61,15 @@ class ChatsFragment : Fragment() {
             }
         })
 
+        updateToken(FirebaseInstanceId.getInstance().token)
+
         return view
+    }
+
+    private fun updateToken(token: String?) {
+        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
+        val token1 = Token(token!!)
+        ref.child(firebaseUser!!.uid).setValue(token1)
     }
 
     private fun retrieveChatList(){
