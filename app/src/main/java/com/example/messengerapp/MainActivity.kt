@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity() {
         val ref = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
 
         val hashMap = HashMap<String, Any>()
-        hashMap["Status"] = status
+        hashMap["status"] = status
         ref!!.updateChildren(hashMap)
     }
 

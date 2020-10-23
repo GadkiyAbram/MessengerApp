@@ -79,7 +79,7 @@ class UserAdapter(
                 "Visit Profile"
             )
             val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
-            builder.setTitle("Whot do you want?")
+            builder.setTitle("What do you want?")
             builder.setItems(options, DialogInterface.OnClickListener { dialog, position ->
                 if (position == 0){
                     val intent = Intent(mContext, MessageChatActivity::class.java)
