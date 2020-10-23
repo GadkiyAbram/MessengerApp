@@ -13,6 +13,7 @@ import com.example.messengerapp.MessageChatActivity
 import com.example.messengerapp.ModelClasses.Chat
 import com.example.messengerapp.ModelClasses.Users
 import com.example.messengerapp.R
+import com.example.messengerapp.VisitUserProfileActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -87,7 +88,9 @@ class UserAdapter(
                     mContext.startActivity(intent)
                 }
                 if (position == 1){
-
+                    val intent = Intent(mContext, VisitUserProfileActivity::class.java)
+                    intent.putExtra("visit_id", user.getUID())
+                    mContext.startActivity(intent)
                 }
             })
             builder.show()
@@ -106,7 +109,11 @@ class UserAdapter(
                     val chat: Chat? = dataSnapshot.getValue(Chat::class.java)
 
                     if (firebaseUser != null && chat != null){
-                        if (chat.getReceiver() == firebaseUser!!.uid && chat.getSender() == chatUserId || chat.getReceiver() == chatUserId && chat.getSender() == firebaseUser!!.uid){
+                        if (chat.getReceiver() == firebaseUser!!.uid &&
+                            chat.getSender() == chatUserId ||
+                            chat.getReceiver() == chatUserId &&
+                            chat.getSender() == firebaseUser!!.uid)
+                         {
                             lastMsg = chat.getMessage()!!
                         }
                     }

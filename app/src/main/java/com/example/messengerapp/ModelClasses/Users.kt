@@ -63,7 +63,7 @@ class Users {
         return cover
     }
 
-    fun setCoveer(cover: String){
+    fun setCover(cover: String){
         this.cover = cover
     }
 

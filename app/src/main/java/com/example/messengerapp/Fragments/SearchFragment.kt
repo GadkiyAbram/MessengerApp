@@ -86,7 +86,6 @@ class SearchFragment : Fragment() {
                     recyclerView!!.adapter = userAdapter
                 }
             }
-
         })
     }
 
